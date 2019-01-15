@@ -27,7 +27,7 @@ class lexer {
   /**
    * returns character at current location
    * @return {string || null}
-  **/
+   **/
   peekChar() {
     //check if we have gotten to the last character in the 
     // input source code
@@ -35,36 +35,37 @@ class lexer {
       this.code.charAt(this.lastPosition + 1) :
       null;
   }
-  
+
   /**  
    * check if we have gotten to te last character in 
    * the input source code
    * @return {boolean}
-  **/
+   **/
   lastReached() {
     return (this.lastPosition + 1 >= this.code.length) ? true : false;
 
   }
-  
+
   /**
    * check if characters in position are valid keywords or identifier
    * @return {object || null}
-  **/
+   **/
   identifyKeyword() {
     let char = "";
+
     //loop through source code characters and add them up 
     //if there are valid identifierChar
     while (this.identifierChar.indexOf(this.peekChar()) > -1) {
       char += this.eatChar();
     }
-    
+
     //check if added character is a valid inbuilt keyword
     if (this.keyWord.indexOf(char) > -1) {
       return {
         type: 'keyword',
         value: char
       };
-    //if it is not a keyword then it has to be an identifier (variable or function name)
+      //if it is not a keyword then it has to be an identifier (variable or function name)
     } else if (char.length > 0) {
       return {
         type: 'identifier',
@@ -76,12 +77,12 @@ class lexer {
     //this.eatChar();
 
   }
-  
-  /** TODO: add support for symbol characters e.t.c
-   * TODO: should probably throw an error if string doesnt end with an ' or " 
+
+  /**
+   * TODO: should probably throw an error if string is not enclosed in ' or " or probably not
    * check if character in position is a valid string
    * @return {string || null}
-  **/
+   **/
   identifyStringLiteral() {
     let char = "";
 
@@ -91,20 +92,13 @@ class lexer {
 
       //loop through source code characters and add them up 
       //if there are valid identifierChar or numberLiteral
-      //while (
-        //this.identifierChar.indexOf(this.peekChar()) > -1 ||
-        //this.numberLiteral.indexOf(this.peekChar()) > -1
-      //) {
-        //char += this.eatChar();
-     // }
+      while (this.peekChar() !== char[0]) {
+        if (this.lastReached() === true) throw new SyntaxError('invalide token')
+        char += this.eatChar();
+      }
 
-     while (this.peekChar() !== char[0]) {
-      if (this.lastReached() === true) throw new SyntaxError('invalide token')
-      char += this.eatChar();
-     }
-      
       //check if string character ends with ' or "
-      if (this.peekChar() === "'" || this.peekChar() === '"') {
+      if (this.peekChar() === char[0]) {
         char += this.eatChar();
       }
     } //else this.eatChar();
@@ -191,7 +185,7 @@ class lexer {
 
 }
 console.time('lex')
-const code = 'var str = "hey43+jhdh; var num = 32;"';
+const code = `var str = "hey43+jhdh;'' var num = 32;"`;
 const lex = new lexer(code);
 console.log(lex.test());
 console.timeEnd('lex')
