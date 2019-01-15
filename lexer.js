@@ -1,6 +1,11 @@
+
+/** TODO: should make lexer ignore spaces
+ * TODO: should make lexer igonre comments
+ * TODO: should make lexer increment line variable when it encounters a newline
+**/
 class lexer {
   constructor(code) {
-    //source code character
+    //input source code character
     this.code = code;
     //lexer position
     this.column = 0;
@@ -15,7 +20,7 @@ class lexer {
 
   /**
    * consumes character at current position and increments
-   * last position and column
+   * lastPosition and column
    * @return {string}
    **/
   eatChar() {
@@ -65,7 +70,7 @@ class lexer {
         type: 'keyword',
         value: char
       };
-      //if it is not a keyword then it has to be an identifier (variable or function name)
+    //if it is not a keyword then it has to be an identifier (variable or function name)
     } else if (char.length > 0) {
       return {
         type: 'identifier',
@@ -79,25 +84,29 @@ class lexer {
   }
 
   /**
-   * TODO: should probably throw an error if string is not enclosed in ' or " or probably not
-   * check if character in position is a valid string
-   * @return {string || null}
+   * TODO: should probably throw an error if string is not enclosed in a quote or probably not
+   * check if characters in position are valid string
+   * @return {object || null}
    **/
   identifyStringLiteral() {
     let char = "";
 
-    //check if first character begins with a ' or " 
+    //check if first character begins with quotes 
     if (this.peekChar() === "'" || this.peekChar() === '"') {
       char += this.eatChar();
 
       //loop through source code characters and add them up 
-      //if there are valid identifierChar or numberLiteral
+      //if they are enclosed in quotes
       while (this.peekChar() !== char[0]) {
+         
+        //used the below line to fix infinite loop, if the supposed
+        //string doesnt have a closing quote 
         if (this.lastReached() === true) throw new SyntaxError('invalide token')
+
         char += this.eatChar();
       }
 
-      //check if string character ends with ' or "
+      //check if string character ends with quote matching the first one
       if (this.peekChar() === char[0]) {
         char += this.eatChar();
       }
@@ -112,9 +121,15 @@ class lexer {
     return null;
 
   }
-
+  
+  /**
+   * checks if characters in position are valid integers
+   * @return{object || null}
+  **/
   identifyNumberLiteral() {
     let char = "";
+    
+    //if characters are valid numberLiterals continue consuming them
     while (this.numberLiteral.indexOf(this.peekChar()) > -1) {
       char += this.eatChar();
     }
@@ -128,12 +143,16 @@ class lexer {
 
     return null;
   }
-
+  
+  /**
+   * checks if characters in position are valid operators
+   * @return{object || null}
+  **/
   identifyOperator() {
     let char = "";
-    // console.log(this.peekChar(),32)
-    if (this.operator.indexOf(this.peekChar()) > -1) {
-      //console.log(this.peekChar())
+
+    //if characters are valid symbols, continue consuming
+    while (this.operator.indexOf(this.peekChar()) > -1) {
       char += this.eatChar();
     }
 
@@ -148,9 +167,14 @@ class lexer {
 
     return null;
   }
+  
+  /**
+   * checks if character in position are whitespaces
+   * @return{object || null}
+  **/
   space() {
     let char = ""
-    if (this.peekChar() === ' ') {
+    while (this.peekChar() === ' ') {
       char += this.eatChar();
     }
 
@@ -185,7 +209,7 @@ class lexer {
 
 }
 console.time('lex')
-const code = `var str = "hey43+jhdh;'' var num = 32;"`;
+const code = `var str = "hey43+jhdh;\n var num = 32;"`;
 const lex = new lexer(code);
 console.log(lex.test());
 console.timeEnd('lex')
