@@ -1,7 +1,5 @@
-
 /** TODO: should make lexer ignore spaces
  * TODO: should make lexer igonre comments
- * TODO: should make lexer increment line variable when
 **/
 class lexer {
   constructor(code) {
@@ -64,9 +62,10 @@ class lexer {
     while (this.identifierChar.indexOf(this.peekChar()) > -1) {
       char += this.eatChar();
     }
-
+     //console.log(char,2)
     //check if added character is a valid inbuilt keyword
     if (this.keyWord.indexOf(char) > -1) {
+      //console.log(char)
       return {
         type: 'keyword',
         value: char
@@ -150,6 +149,7 @@ class lexer {
    * @return{object || null}
   **/
   booleanLiteral() {
+    const { lastPosition, column, line } = this;
     let char = '';
 
     //if characters are valid charliterals add them up
@@ -164,6 +164,7 @@ class lexer {
         value: char
       }
     }
+    this.revert(lastPosition, column, line);
 
     return null;
   }
@@ -234,9 +235,21 @@ class lexer {
 
   }
 
+  /**
+   * reverts code position to previous state if lexing fails
+   *
+  **/
+  revert(lastPosition, column, line) {
+    this.lastPosition = lastPosition;
+    this.column = column;
+    this.line = line;
+  }
+
   test() {
     let token = [];
+
     while (this.lastReached() !== true) {
+      //console.log(this.lastPosition+1);
       const temp = this.booleanLiteral() ||
         this.identifyKeyword() ||
         this.stringLiteral() ||
@@ -245,7 +258,14 @@ class lexer {
         this.numberLiteral() ||
         this.identifyNewline();
 
-      if (temp !== null) token.push(temp);
+      if (temp) {
+
+        if (temp.type !== 'space' && temp.type !== 'newline'){
+          token.push(temp);
+        }
+
+      }
+
     }
 
     return token;
@@ -253,7 +273,7 @@ class lexer {
 
 } 
 console.time('lex')
-const code = `var str = "hey43+jhdh"; \n\n\n var num = false;`;
+const code = 'true var str = "hey43+jhdh" \n; \n\n\n var num = false;';
 const lex = new lexer(code);
 console.log(lex.test());
 console.timeEnd('lex')
