@@ -1,20 +1,21 @@
 
 /** TODO: should make lexer ignore spaces
  * TODO: should make lexer igonre comments
- * TODO: should make lexer increment line variable when it encounters a newline
+ * TODO: should make lexer increment line variable when
 **/
 class lexer {
   constructor(code) {
     //input source code character
     this.code = code;
     //lexer position
-    this.column = 0;
+    this.line = 1;
+    this.column = 1;
     this.lastPosition = -1;
     //identifiers
     this.identifierChar = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this.operator = '=;+-><';
     this.keyWord = ['var', 'let', 'const', 'if', 'else'];
-    this.numberLiteral = '1234567890';
+    this.numberChar = '1234567890';
 
   }
 
@@ -88,7 +89,7 @@ class lexer {
    * check if characters in position are valid string
    * @return {object || null}
    **/
-  identifyStringLiteral() {
+  stringLiteral() {
     let char = "";
 
     //check if first character begins with quotes 
@@ -126,17 +127,40 @@ class lexer {
    * checks if characters in position are valid integers
    * @return{object || null}
   **/
-  identifyNumberLiteral() {
+  numberLiteral() {
     let char = "";
     
     //if characters are valid numberLiterals continue consuming them
-    while (this.numberLiteral.indexOf(this.peekChar()) > -1) {
+    while (this.numberChar.indexOf(this.peekChar()) > -1) {
       char += this.eatChar();
     }
 
     if (char.length > 0) {
       return {
         type: 'numberLiteral',
+        value: char
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * checks if characters are valid boolean literals 
+   * @return{object || null}
+  **/
+  booleanLiteral() {
+    let char = '';
+
+    //if characters are valid charliterals add them up
+    while (this.identifierChar.indexOf(this.peekChar()) > -1) {
+      char += this.eatChar()
+    }
+
+    //check if added values are boolean values
+    if (char === 'true' || char === 'false') {
+      return {
+        type: 'booleanLiteral',
         value: char
       }
     }
@@ -167,6 +191,26 @@ class lexer {
 
     return null;
   }
+
+  /**
+   * checks if character in postion are newlines
+   * @return{object || null}
+  **/
+  identifyNewline() {
+    let char = ''
+
+    if (this.peekChar() === '\n') {
+      char += this.eatChar();
+      this.line += 1;
+
+      return {
+        type: 'newline',
+        value: char
+      }
+    }
+
+    return null
+  }
   
   /**
    * checks if character in position are whitespaces
@@ -193,13 +237,13 @@ class lexer {
   test() {
     let token = [];
     while (this.lastReached() !== true) {
-      const temp = this.identifyKeyword() ||
-        this.identifyStringLiteral() ||
+      const temp = this.booleanLiteral() ||
+        this.identifyKeyword() ||
+        this.stringLiteral() ||
         this.identifyOperator() ||
         this.space() ||
-        this.identifyNumberLiteral();
-
-      //console.log(temp);
+        this.numberLiteral() ||
+        this.identifyNewline();
 
       if (temp !== null) token.push(temp);
     }
@@ -207,9 +251,9 @@ class lexer {
     return token;
   }
 
-}
+} 
 console.time('lex')
-const code = `var str = "hey43+jhdh;\n var num = 32;"`;
+const code = `var str = "hey43+jhdh"; \n\n\n var num = false;`;
 const lex = new lexer(code);
 console.log(lex.test());
 console.timeEnd('lex')
