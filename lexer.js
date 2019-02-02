@@ -273,7 +273,8 @@ class Lexer {
       chars += this.eatChar();
       chars += this.eatChar();
 
-      while (this.peekChar() !== '\n') {
+      while (this.peekChar() !== '\n'
+      && this.lastPosition <= this.code.length) {
         chars += this.eatChar();
       }
     }
@@ -324,7 +325,7 @@ class Lexer {
   }
 }
 console.time('lex');
-const code = 'fun main(a,b){print(\'hello world\')}//heygd \n';
+const code = 'fun main(a,b){print(\'hello world\')} //heygd //hey ';
 const lex = new Lexer(code);
 console.log(lex.lex());
 console.timeEnd('lex');
