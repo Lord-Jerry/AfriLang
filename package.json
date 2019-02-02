@@ -1,0 +1,25 @@
+{
+  "name": "AfriLang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lexer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lord-Jerry/AfriLang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lord-Jerry/AfriLang/issues"
+  },
+  "homepage": "https://github.com/Lord-Jerry/AfriLang#readme",
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
+}
