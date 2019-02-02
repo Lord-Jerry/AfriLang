@@ -106,7 +106,7 @@ class Lexer {
       while (this.peekChar() !== char[0]) {
         // used the below line to fix infinite loop, if the supposed
         // string doesnt have a closing quote
-        if (this.lastReached() === true) throw new SyntaxError('invalide token');
+        if (this.lastReached() === true) throw new SyntaxError('invalid string');
 
         char += this.eatChar();
       }
@@ -273,8 +273,7 @@ class Lexer {
       chars += this.eatChar();
       chars += this.eatChar();
 
-      while (this.peekChar() !== '\n'
-      && this.lastPosition <= this.code.length) {
+      while (this.peekChar() !== '\n' && this.lastReached() === false) {
         chars += this.eatChar();
       }
     }
@@ -325,7 +324,7 @@ class Lexer {
   }
 }
 console.time('lex');
-const code = 'fun main(a,b){print(\'hello world\')} //heygd //hey ';
+const code = 'fun main(a,b){print(\'hello world\')} //heygd\n //hey';
 const lex = new Lexer(code);
 console.log(lex.lex());
 console.timeEnd('lex');
