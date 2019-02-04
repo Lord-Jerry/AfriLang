@@ -3,11 +3,9 @@
 /**
  * * ### AFRILANG LEXER
  * #### NOTE:
- * * gsg
+ * *
  * #### TODO:
  * * should make lexer ignore spaces
- * #### TODO:
- * * should make lexer ignore comments
  */
 class Lexer {
   constructor(code) {
@@ -27,8 +25,8 @@ class Lexer {
 
   /**
    * * consumes character at current position and increments
-   * lastPosition and column
-   * @return {string}
+   * `lastPosition` and `column`
+   *  @return {string}
    * */
   eatChar() {
     this.column += 1;
@@ -49,7 +47,7 @@ class Lexer {
   }
 
   /**
-   * check if we have gotten to the last character in
+   * check if lexer has gotten to the last character in
    * the input source code
    * @return {boolean}
    * */
@@ -76,8 +74,10 @@ class Lexer {
         type: 'keyword',
         value: char,
       };
-      // if it is not a keyword then it has to be an identifier (variable or function name)
     }
+
+    // if added characters are not a keyword,
+    // then it has to be an identifier (variable or function name)
     if (char.length > 0) {
       return {
         type: 'identifier',
@@ -90,8 +90,10 @@ class Lexer {
   }
 
   /**
-   * TODO: should probably throw an error if string is not enclosed in a quote or probably not
-   * check if characters in position are valid string
+   * ### TODO:
+   * * should probably throw an error if string is not enclosed in a quote or probably not
+   * ### TODO:
+   * * check if characters in position are valid string
    * @return {object || null}
    * */
   stringLiteral() {
@@ -101,7 +103,7 @@ class Lexer {
     if (this.peekChar() === "'" || this.peekChar() === '"') {
       char += this.eatChar();
 
-      // loop through source code characters and add them up
+      // loop through characters and add them up
       // if they are enclosed in quotes
       while (this.peekChar() !== char[0]) {
         // used the below line to fix infinite loop, if the supposed
@@ -123,6 +125,7 @@ class Lexer {
         value: char,
       };
     }
+
     return null;
   }
 
@@ -241,7 +244,7 @@ class Lexer {
   }
 
   /**
-   * checks if character in position are whitespaces
+   * * checks if character in position are whitespaces
    * @return {object || null}
    * */
   space() {
@@ -262,8 +265,8 @@ class Lexer {
   }
 
   /**
-   * * check if characters are single line comments
-   *  @return {object || null}
+   * * identify single line comments
+   * @return {object || null}
    */
   identifySingleLineComment() {
     let chars = '';
@@ -289,8 +292,10 @@ class Lexer {
 
 
   /**
-   * reverts code position to previous state if lexing fails
-   *
+   * * reverts code position to previous state if lexing fails
+   * @param {lastPosition: integer }
+   * @param {column: integer}
+   * @param {line: integer}
    * */
   revert(lastPosition, column, line) {
     this.lastPosition = lastPosition;
@@ -324,7 +329,7 @@ class Lexer {
   }
 }
 console.time('lex');
-const code = 'fun main(a,b){print(\'hello world\')} //heygd\n //hey';
+const code = 'fun +++ main(a,b){print(\'hello world\')} //heygd\n //hey';
 const lex = new Lexer(code);
 console.log(lex.lex());
 console.timeEnd('lex');
