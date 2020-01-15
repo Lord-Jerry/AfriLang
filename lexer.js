@@ -328,8 +328,5 @@ class Lexer {
     return token;
   }
 }
-console.time('lex');
-const code = 'fun +++ main(a,b){print(\'hello world\')} //heygd\n //hey';
-const lex = new Lexer(code);
-console.log(lex.lex());
-console.timeEnd('lex');
+
+module.exports = Lexer;
