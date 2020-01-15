@@ -9,6 +9,8 @@ fun main() {
 `;
 
 console.time('lex');
-const lex = new Lexer(code);
-console.log(lex.lex());
+
+const tokens = new Lexer(code).lex();
+new Parser(tokens).parse();
+
 console.timeEnd('lex');
