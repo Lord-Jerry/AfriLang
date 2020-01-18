@@ -31,7 +31,7 @@ class Lexer {
   eatChar() {
     this.column += 1;
     this.lastPosition += 1;
-    return this.code.charAt(this.lastPosition);
+    return this.code[this.lastPosition];
   }
 
   /**
@@ -42,8 +42,7 @@ class Lexer {
     // check if we have gotten to the last character in the
     // input source code
     return (this.lastPosition + 1 < this.code.length)
-      ? this.code.charAt(this.lastPosition + 1)
-      : null;
+      ? this.code[this.lastPosition + 1] : null;
   }
 
   /**
@@ -64,12 +63,12 @@ class Lexer {
 
     // loop through source code characters and add them up
     // if there are valid identifierChar
-    while (this.identifierChar.indexOf(this.peekChar()) > -1) {
+    while (this.identifierChar.includes(this.peekChar())) {
       char += this.eatChar();
     }
 
     // check if added character is a valid inbuilt keyword
-    if (this.keyWord.indexOf(char) > -1) {
+    if (this.keyWord.includes(char)) {
       return {
         type: 'keyword',
         value: char,
@@ -137,7 +136,7 @@ class Lexer {
     let char = '';
 
     // if characters are valid numberLiterals continue consuming them
-    while (this.numberChar.indexOf(this.peekChar()) > -1) {
+    while (this.numberChar.includes(this.peekChar())) {
       char += this.eatChar();
     }
 
@@ -164,7 +163,7 @@ class Lexer {
     let char = '';
 
     // if characters are valid charliterals add them up
-    while (this.identifierChar.indexOf(this.peekChar()) > -1) {
+    while (this.identifierChar.includes(this.peekChar())) {
       char += this.eatChar();
     }
 
@@ -188,7 +187,7 @@ class Lexer {
     let char = '';
 
     // if characters are valid symbols, continue consuming
-    while (this.operator.indexOf(this.peekChar()) > -1) {
+    while (this.operator.includes(this.peekChar())) {
       char += this.eatChar();
     }
 
@@ -209,7 +208,7 @@ class Lexer {
     let char = '';
 
     // if characters are valid separators, continue consuming
-    if (this.separator.indexOf(this.peekChar()) > -1) {
+    if (this.separator.includes(this.peekChar())) {
       char += this.eatChar();
     }
 
@@ -271,8 +270,7 @@ class Lexer {
   identifySingleLineComment() {
     let chars = '';
 
-    if (this.code.charAt(this.lastPosition + 1) === '/'
-      && this.code.charAt(this.lastPosition + 2 === '/')) {
+    if ((this.code[this.lastPosition + 1] === '/') && (this.code[this.lastPosition + 2] === '/')) {
       chars += this.eatChar();
       chars += this.eatChar();
 
